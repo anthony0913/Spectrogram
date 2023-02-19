@@ -7,6 +7,7 @@ const audioBufferSize = 2048;
 analyser.fftSize = 2048;
 const bufferLength = analyser.frequencyBinCount;
 const dataArray = new Uint8Array(bufferLength);
+const multiplier = 1.2;
 let matrixSize = 100;
 let matrix = Array.from({ length: numBins }, () => new Array(matrixSize).fill(0));
 let spectrogramData = new Array(bufferLength).fill(0);
@@ -20,7 +21,7 @@ function drawHeatmap() {
   for (let i = 0; i < matrixSize - 1; i++) {
     for (let j = 0; j < numBins; j++) {
       const value = matrix[j][i];
-      const color = `rgb(${(1 - value) * 255}, ${(1 - value) * 255}, ${(1 - value) * 255})`;
+      const color = `rgb(${(1 - value * multiplier) * 255}, ${(1 - value * multiplier) * 255}, ${(1 - value * multiplier) * 255})`;
       const rectX = i * rectWidth;
       const rectY = j * rectHeight;
       ctx.fillStyle = color;
@@ -31,7 +32,7 @@ function drawHeatmap() {
   // Draw spectrogram data in last column
   const lastColumn = matrixSize - 1;
   for (let j = 0; j < numBins; j++) {
-    const value = spectrogramData[j];
+    const value = spectrogramData[j]; // scale all amplitude values by a constant factor of 5
     const r = 255 * Math.max(0, value - 0.5) * 2;
     const g = 255 * Math.abs(value - 0.5) * 2;
     const b = 255 * Math.max(0, 0.5 - value) * 2;
@@ -67,12 +68,24 @@ function drawHeatmap() {
   ctx.restore();
 }
 
+// Hamming Window function
+function hammingWindow(n, N) {
+  return 0.54 - 0.46 * Math.cos((2 * Math.PI * n) / (N - 1));
+}
+
 // Update spectrogram data
 function updateSpectrogramData() {
   analyser.getByteFrequencyData(dataArray);
+
+  // Apply Hamming window
+  for (let i = 0; i < numBins; i++) {
+    dataArray[i] *= hammingWindow(i, numBins);
+  }
+
   for (let i = 0; i < numBins; i++) {
     const value = dataArray[i] / 255;
-    spectrogramData[i] = value;
+    const scaledValue = value * multiplier;
+    spectrogramData[i] = scaledValue;
     for (let j = 0; j < matrixSize - 2; j++) {
       matrix[i][j] = matrix[i][j + 1];
     }
