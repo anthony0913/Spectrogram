@@ -99,12 +99,21 @@ window.addEventListener("load", startCapture);
 
 // Resize canvas function
 function resizeCanvas() {
+  const html = document.querySelector('html');
+  const body = document.querySelector('body');
   const rectWidth = (canvas.width - numBins - 50) / (matrixSize - 1);
   const rectHeight = Math.floor(canvas.height / numBins);
-  canvas.width = Math.ceil(window.innerWidth / rectWidth) * rectWidth;
-  canvas.height = window.innerHeight;
+  canvas.width = html.clientWidth;
+  canvas.height = body.clientHeight;
+  heatmap.width = html.clientWidth;
+  heatmap.height = body.clientHeight;
   drawHeatmap();
 }
+
+window.addEventListener("load", () => {
+  resizeCanvas();
+  startCapture();
+});
 
 // Debounced resize canvas function
 const debouncedResizeCanvas = _.debounce(resizeCanvas, 100);
