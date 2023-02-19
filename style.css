@@ -8,6 +8,12 @@ html, body {
 
 canvas {
   box-sizing: border-box;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+#spectrogram {
   position: fixed;
   top: 0;
   left: 0;
@@ -16,14 +22,10 @@ canvas {
 }
 
 #heatmap {
-  width: 100%;
-  height: 100%;
-}
-
-canvas + canvas {
-  position: fixed;
+  position: absolute;
+  left: 0;
   top: 0;
   right: 0;
-  width: 30%;
-  height: 100%;
+  bottom: auto;
+  border: none;
 }
