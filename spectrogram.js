@@ -67,9 +67,20 @@ function drawHeatmap() {
   ctx.restore();
 }
 
+// Hamming Window function
+function hammingWindow(n, N) {
+  return 0.54 - 0.46 * Math.cos((2 * Math.PI * n) / (N - 1));
+}
+
 // Update spectrogram data
 function updateSpectrogramData() {
   analyser.getByteFrequencyData(dataArray);
+
+  // Apply Hamming window
+  for (let i = 0; i < numBins; i++) {
+    dataArray[i] *= hammingWindow(i, numBins);
+  }
+
   for (let i = 0; i < numBins; i++) {
     const value = dataArray[i] / 255;
     spectrogramData[i] = value;
