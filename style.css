@@ -27,3 +27,17 @@ canvas + canvas {
   width: 30%;
   height: 100%;
 }
+
+canvas {
+  border: 3px solid red;
+}
+
+#heatmap + canvas {
+  box-sizing: border-box;
+  position: fixed;
+  top: 0;
+  left: 70%;
+  width: 30%;
+  height: 100%;
+  border: 3px solid green;
+}
